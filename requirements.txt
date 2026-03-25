@@ -1,0 +1,8 @@
+numpy
+scikit-learn
+hdbscan
+sentence-transformers
+torch
+matplotlib
+umap-learn
+wordcloud
