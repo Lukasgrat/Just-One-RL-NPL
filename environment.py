@@ -29,16 +29,19 @@ class GameModelEnv():
   def __init__(self):
     self.model = GameModel("data/words.txt", 3)
     self.reward = 0
-  def reset(self, clues: set[str]):
+  def reset(self):
     self.model = GameModel("data/words.txt", 3)
+    return self.model.answer
+  def start_guessing(self, clues: set[str]):
     self.observation = clues
     self.action_space = self.model.words.copy() * 2
     for observation in self.observation:
       self.action_space.remove(observation)
     return self.observation
+
   def step(self, action):
     if(self.model.guess(action)):
-      return 50
+      return 10000
     else:
       return -10
 

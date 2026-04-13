@@ -27,14 +27,17 @@ def hashObs(obs):
 	'''
 	arr = []
 	for val in obs:
-		arr.append(find_cluster(val, clusters))
+		print("Putting word: " + val)
+		num = find_cluster(val, clusters)
+		print("Number: " + str(num))
+		arr.append(num)
 	return hash(tuple(sorted(arr)))
 def hashAction(action, env : GameModelEnv):
 	for x in range(0, len(env.model.words)):
 		if(env.model.words[x] == action):
 			return x
 	return -1
-def Q_learning(clues : set[str], num_episodes=10000, gamma=0.9, epsilon=1, decay_rate=0.999):
+def Q_learning(clues : set[str], embeddings, num_episodes=10000, gamma=0.9, epsilon=1, decay_rate=0.999):
 	"""
 	Run Q-learning algorithm for a specified number of episodes.
 
@@ -59,7 +62,10 @@ def Q_learning(clues : set[str], num_episodes=10000, gamma=0.9, epsilon=1, decay
 		#print("Running episode: " +  str(iteration))
 		#Reset for the next run
 		in_completion_state = False
-		current_Observation = env.reset(clues)
+		answer = env.reset()
+		clues = get_n_clues(answer, clusters, 2, embeddings)
+		current_Observation = env.start_guessing(clues)
+
 		total_reward = 0
 		hashed_state = hashObs(current_Observation)
 		if hashed_state not in Q_table:
@@ -72,6 +78,7 @@ def Q_learning(clues : set[str], num_episodes=10000, gamma=0.9, epsilon=1, decay
 		new_reward = env.step(action)
 		if(new_reward > 0):
 			print("correct guess number: " + str(corret_guesses) + " with word" + action)
+			print("sending correct to " + str(hashed_state))
 			corret_guesses += 1
 		total_reward += new_reward
 		η = 1 / (1 + updateNumber_Table[hashed_state][hashAction(action, env)])
@@ -91,14 +98,14 @@ def Q_learning(clues : set[str], num_episodes=10000, gamma=0.9, epsilon=1, decay
 Specify number of episodes and decay rate for training and evaluation.
 '''
 
-num_episodes = 1000000
+num_episodes = 10000
 decay_rate = 0.999999
 
 
 def softmax(x, temp=1.0):
 	e_x = np.exp((x - np.max(x)) / temp)
 	return e_x / e_x.sum(axis=0)
-def conduct_evaluations(clues : set[str]):
+def conduct_evaluations(clusters, embeddings):
 	rewards = []
 	# adding metrics to print
 	total_steps = 0
@@ -116,7 +123,9 @@ def conduct_evaluations(clues : set[str]):
 
 	EVAL_EPISODE_COUNT = 100000
 	for ep_number in tqdm(range(EVAL_EPISODE_COUNT)):
-		current_Observation = env.reset(clues)
+		answer = env.reset()
+		clues = get_n_clues(answer, clusters, 2, embeddings)
+		current_Observation = env.start_guessing(clues)
 		total_reward = 0
 		hashed_state = hashObs(current_Observation)
 		try:
@@ -134,12 +143,12 @@ def conduct_evaluations(clues : set[str]):
 
 	avg_reward = sum(rewards)/len(rewards)
 	return avg_reward
-def Q_learning_main(train_flag: bool, clues : set[str]):
+def Q_learning_main(train_flag: bool, clusters, embeddings):
 	if not train_flag:
-		return conduct_evaluations(clues)
+		return conduct_evaluations(clusters, embeddings)
 	if train_flag:
 		print("Beginning Q-learning")
-		Q_table = Q_learning(clues, num_episodes=num_episodes, gamma=0.9, epsilon=1, decay_rate=decay_rate) # Run Q-learning
+		Q_table = Q_learning(clusters, embeddings, num_episodes=num_episodes, gamma=0.9, epsilon=1, decay_rate=decay_rate) # Run Q-learning
 		# Save the Q-table dict to a file
 		with open('Q_table_'+str(num_episodes)+'_'+str(decay_rate)+'.pickle', 'wb') as handle:
 			pickle.dump(Q_table, handle, protocol=pickle.HIGHEST_PROTOCOL)
