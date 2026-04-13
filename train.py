@@ -11,6 +11,15 @@ def main():
     clusters = pd.read_pickle("data/cluster.pkl")
     # load word embeddings
     embeddings = pd.read_pickle("data/embeddings.pkl")
+    embeddings = pd.read_pickle("data/embeddings.pkl")
+
+    # if DataFrame, convert
+    if isinstance(embeddings, pd.DataFrame):
+        embeddings = {
+            row['word']: row.drop('word').values
+            for _, row in embeddings.iterrows()
+        }
+
 
     # randomly choose a word from words.txt
     with open("data/words.txt", "r") as f:

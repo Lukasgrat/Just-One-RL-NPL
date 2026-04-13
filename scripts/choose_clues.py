@@ -10,6 +10,8 @@ from sentence_transformers import SentenceTransformer
 
 # cosine similarity
 def cosine_similarity(a, b):
+    if len(a) != len(b):
+        raise Exception(f"DIM MISMATCH: {len(a)} vs {len(b)}")
     return np.dot(a, b) / (np.linalg.norm(a) * np.linalg.norm(b))
 
 # softmax
@@ -35,11 +37,10 @@ def rank_words(target_word, clusters, cluster_id, embeddings_df):
     if not words:
         return [], []
 
-    # get the embedding for the target word
-    embedding_vector = embeddings_df[embeddings_df['word'] == target_word].drop(columns='word').values.flatten()
+    embedding_vector = embeddings_df[target_word]
 
-    # get embeddings for the other words
-    other_embeddings = embeddings_df[embeddings_df['word'].isin(words)].drop(columns='word').values
+    other_embeddings = np.array([embeddings_df[w] for w in words if w in embeddings_df])
+    words = [w for w in words if w in embeddings_df]
 
     # compute cosine similarity row by row
     similarities = [cosine_similarity(embedding_vector, emb) for emb in other_embeddings]
