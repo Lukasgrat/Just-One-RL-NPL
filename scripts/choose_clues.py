@@ -19,11 +19,8 @@ def softmax(x):
 
 # getting the cluster id for the given word
 def find_cluster(target_word, clusters):
-    print("Looking for word: ", target_word)
     for idx, row in clusters.iterrows():
-        print("Words :\n ", row['words'])
         if target_word in row['words']:
-            print("Found word")
             return row['cluster_id']
     return None
 

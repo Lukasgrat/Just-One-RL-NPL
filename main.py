@@ -6,13 +6,13 @@ import numpy as np
 # pseudocode plan for now
 def main():
     # load clusters.pkl
-    clusters = pd.read_pickle("../data/cluster.pkl")
+    clusters = pd.read_pickle("data/cluster.pkl")
 
     # load word embeddings
-    embeddings = pd.read_pickle("../data/embeddings.pkl")
+    embeddings = pd.read_pickle("data/embeddings.pkl")
 
     # randomly choose a word from words.txt
-    with open("../data/words.txt", "r") as f:
+    with open("data/words.txt", "r") as f:
         words = f.read().splitlines()
     target_word = np.random.choice(words)
 
@@ -23,7 +23,7 @@ def main():
     # feed these clues into q learning clue guesser
     # keep track of rewards and metrics
     avg_reward = Q_learning_main(False, clues)
-    
+    print("Ending evaluation with reward: " + str(avg_reward))
 
 if __name__  == "__main__":
     main()

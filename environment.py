@@ -6,11 +6,7 @@ class GameModel():
     with open(filename, "r") as file:
       output: str = file.read()
       self.words = output.split('\n')
-    self.answer = None
-  def startGame(self):
-    print("Length of words: ", len(self.words))
     self.answer = random.choice(self.words)
-    self.hints = []
   def makeHint(self, guess):
     if(guess in self.words):
       self.hints.append(guess)
@@ -51,7 +47,6 @@ class GameModelEnv():
 
 def humanController(playerCount : int = 6):
   model : GameModel = GameModel("data/words.txt", playerCount)
-  model.startGame()
   print("The word is: ", model.answer)
   for x in range(1, playerCount):
     while(True):
