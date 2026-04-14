@@ -38,7 +38,8 @@ class GameModelEnv():
     self.observation = clues
     self.action_space = self.model.words.copy() * 2
     for observation in self.observation:
-      self.action_space.remove(observation)
+      if observation is not None and observation in self.action_space:
+        self.action_space.remove(observation)
     return self.observation
 
   def step(self, action):

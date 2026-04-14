@@ -61,8 +61,10 @@ def Q_learning(clusters, embeddings, num_episodes=10000, gamma=0.9, epsilon=1, d
 		print("Running episode: " +  str(iteration))
 		#Reset for the next run
 		in_completion_state = False
-		answer = env.reset()
-		clues = get_n_clues(answer, clusters, 2, embeddings)
+		clues = set()
+		while not clues:
+			answer = env.reset()
+			clues = get_n_clues(answer, clusters, 2, embeddings)
 		current_Observation = env.start_guessing(clues)
 
 		total_reward = 0
@@ -122,8 +124,10 @@ def conduct_evaluations(clusters, embeddings):
 
 	EVAL_EPISODE_COUNT = 1000
 	for ep_number in tqdm(range(EVAL_EPISODE_COUNT)):
-		answer = env.reset()
-		clues = get_n_clues(answer, clusters, 2, embeddings)
+		clues = set()
+		while not clues:
+			answer = env.reset()
+			clues = get_n_clues(answer, clusters, 2, embeddings)
 		current_Observation = env.start_guessing(clues)
 		total_reward = 0
 		hashed_state = hashObs(current_Observation, embeddings, clusters)

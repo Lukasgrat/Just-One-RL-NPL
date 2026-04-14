@@ -89,7 +89,9 @@ def get_clue(target_word, clusters, embeddings):
 def get_n_clues(target_word, clusters, n, embeddings):
     clues = []
     for i in range(n):
-        clues.append(get_clue(target_word, clusters, embeddings))
-    #print("Obtained clues: ", clues)
+        clue = get_clue(target_word, clusters, embeddings)
+        if clue is not None:
+            clues.append(clue)
+    print("Obtained clues: ", clues)
     # return no duplicates
     return set(clues)
