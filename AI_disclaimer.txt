@@ -1,0 +1,3 @@
+AI Disclaimer: Gen AI was used to help with code implementation. Main use cases were debugging and writing documentation but was also used to help with implementation as well.
+Tool used: Claude
+- Jake Bernhard
